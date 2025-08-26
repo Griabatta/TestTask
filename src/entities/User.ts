@@ -1,3 +1,4 @@
+import { Exclude } from "class-transformer";
 import { IsEmail, IsEnum, IsNotEmpty } from "class-validator";
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
@@ -14,7 +15,7 @@ export enum UserStatus {
 
 @Entity()
 export class User {
-    @PrimaryGeneratedColumn('uuid')
+    @PrimaryGeneratedColumn("increment")
     id: number;
 
     @Column()
@@ -30,13 +31,14 @@ export class User {
     @IsEmail()
     email: string;
 
+    @Exclude()
     @Column()
     @IsNotEmpty()
     password: string;
 
     @Column({type: 'enum', enum: UserRole, default: UserRole.USER})
     @IsEnum(UserRole)
-    role: string;
+    role: UserRole;
 
     @Column({ type: 'enum', enum: UserStatus, default: UserStatus.ACTIVE })
     @IsEnum(UserStatus)

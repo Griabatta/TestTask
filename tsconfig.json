@@ -10,6 +10,8 @@
     "rootDir": "./src",
     "strict": false,
     "strictPropertyInitialization": false,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "types": ["express"],
+    "typeRoots": ["./node_modules/@types", "./types"],
   }
 }
