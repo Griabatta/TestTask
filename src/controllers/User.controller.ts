@@ -1,7 +1,7 @@
 import { CreateUserDto } from "../dtos/createUser.dto";
 import { UserRole } from "../entities/User";
 import { UserService } from "../services/User.service";
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 
 
 export class UserController {
@@ -23,17 +23,22 @@ export class UserController {
         };
     };
 
-    logIn = async (req: Request, res: Response): Promise<void> => {
+    logIn = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const { email, password } = req.body;
-            const token = await this.UserService.logIn(email, password);
-            res.json({token});
-            return;
+            const result = await this.UserService.logIn(email, password);
+            (req as any).user = result.user;
+            next();
         } catch(e) {
             res.status(401).json({ error: e.message });
             return;
         };
     };
+
+    logout = async (req: Request, res: Response): Promise<void> => {
+        res.clearCookie('auth_token');
+        res.json({ message: 'Logged out successfully' });
+    }
 
     getUser = async (req: Request, res: Response): Promise<void> => {
         try {

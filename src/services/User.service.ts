@@ -26,23 +26,13 @@ export class UserService {
         return instanceToPlain(savedUser);
     };
 
-    async logIn(email: string, password: string): Promise<{ token: string; user: Partial<User> }> {
+    async logIn(email: string, password: string): Promise<{ user: Partial<User> }>  {
         const user = await this.userRepository.findOne({ where: { email } });
         if (!user || !(await bcrypt.compare(password, user.password))) {
             throw new Error('Invalid credentials');
-        };
-
-        const token = jwt.sign(
-            { 
-                userId: user.id, 
-                role: user.role,
-                email: user.email 
-            },
-            process.env.JWT_SECRET!,
-            { expiresIn: '24h' }
-        );
+        }
         const { password: _, ...userWithoutPassword } = user;
-        return { token, user: userWithoutPassword };
+        return { user: userWithoutPassword };
     };
 
     async getUser(userId: number, role: UserRole) {
