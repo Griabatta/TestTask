@@ -27,7 +27,6 @@ export class UserController {
         try {
             const { email, password } = req.body;
             const result = await this.UserService.logIn(email, password);
-            (req as any).user = result.user;
             next();
         } catch(e) {
             res.status(401).json({ error: e.message });
@@ -42,10 +41,10 @@ export class UserController {
 
     getUser = async (req: Request, res: Response): Promise<void> => {
         try {
-            const requestedUserId = Number((req as any).params.id);
-            const currentUser = (req as any).user!;
+            const requestedUserId = Number(req.params.id);
+            const currentUser = req.user!;
 
-            if (currentUser.role != UserRole.ADMIN && currentUser.userId !== requestedUserId) {
+            if (currentUser.role != UserRole.ADMIN && currentUser.id !== requestedUserId) {
                 res.status(403).json({ error: 'Access denied' });
                 return;
             };
@@ -64,7 +63,7 @@ export class UserController {
 
     getUsers = async (req: Request, res: Response): Promise<void> => {
         try {
-            const currentUser = (req as any).user!;
+            const currentUser = req.user!;
 
             if (currentUser.role != UserRole.ADMIN) {
                 res.status(403).json({ error: 'Access denied' });
@@ -85,10 +84,10 @@ export class UserController {
 
     toggleStatus = async (req: Request, res: Response): Promise<void> => {
         try {
-            const targetUserId = Number((req as any).params.id);
-            const currentUser = (req as any).user!;
+            const targetUserId = Number(req.params.id);
+            const currentUser = req.user!;
 
-            if (currentUser.role != UserRole.ADMIN && currentUser.userId !== targetUserId) {
+            if (currentUser.role != UserRole.ADMIN && currentUser.id !== targetUserId) {
                 res.status(403).json({ error: 'Access denied' });
                 return;
             };

@@ -3,8 +3,9 @@ import { User, UserRole, UserStatus } from "../entities/User";
 import { AppDataSource } from "../config/data-source";
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
-import { getUserByAdmin, getUserByUser } from "../types/getUser.dto";
+import { getUser, getUserByAdmin } from "../types/getUser.dto";
 import { instanceToPlain } from "class-transformer";
+import { SavedUser } from "../types/createUser.types";
 
 
 
@@ -15,7 +16,7 @@ export class UserService {
         this.userRepository = AppDataSource.getRepository(User);
     };
 
-    async signUp(userData: Partial<User>): Promise<any> {
+    async signUp(userData: Partial<User>): Promise<SavedUser> {
 
         const hashPass = await bcrypt.hash(userData.password, 10);
         const user = this.userRepository.create({
@@ -23,7 +24,7 @@ export class UserService {
             password: hashPass
         });
         const savedUser = await this.userRepository.save(user);
-        return instanceToPlain(savedUser);
+        return savedUser;
     };
 
     async logIn(email: string, password: string): Promise<{ user: Partial<User> }>  {
@@ -36,7 +37,7 @@ export class UserService {
     };
 
     async getUser(userId: number, role: UserRole) {
-        let user: getUserByUser | getUserByAdmin;
+        let user: getUser | getUserByAdmin;
         switch (role) {
             case "admin": {
                 user = await this.userRepository.findOne({

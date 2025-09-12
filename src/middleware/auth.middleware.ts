@@ -15,8 +15,8 @@ export const authToken = (req: Request, res: Response, next: NextFunction) :void
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET!) as any;
-        (req as any).user = {
-            userId: decoded.userId,
+        req.user = {
+            id: decoded.userId,
             role: decoded.role,
             email: decoded.email
         };
@@ -29,12 +29,12 @@ export const authToken = (req: Request, res: Response, next: NextFunction) :void
 }
 
 export const setAuthCookie = (req: Request, res: Response, next: NextFunction): void => {
-    const user = (req as any).user;
+    const user = req.user;
 
     if (user) {
         const token = jwt.sign(
             { 
-                userId: user.id, 
+                id: user.id, 
                 role: user.role,
                 email: user.email 
             },

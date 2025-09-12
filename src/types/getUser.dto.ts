@@ -1,18 +1,14 @@
 import { UserRole, UserStatus } from "../entities/User"
 
-export class getUserByUser {
+export interface getUser {
     fullName: string
     dateOfBirth: Date
     status: UserStatus
     email: string
 }
 
-export class getUserByAdmin {
+export interface getUserByAdmin extends getUser{
     id: number
-    fullName: string
-    dateOfBirth: Date
-    status: UserStatus
-    email: string
     role: UserRole
     createdAt: Date
     updatedAt: Date
